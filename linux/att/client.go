@@ -466,7 +466,7 @@ func (c *Client) ExecuteWrite(flags uint8) error {
 	switch {
 	case rsp[0] == ErrorResponseCode && len(rsp) == 5:
 		return ble.ATTError(rsp[4])
-	case rsp[0] == ErrorResponseCode && len(rsp) == 5:
+	case rsp[0] == ErrorResponseCode && len(rsp) != 5:
 		fallthrough
 	case rsp[0] != rsp.AttributeOpcode():
 		return ErrInvalidResponse
