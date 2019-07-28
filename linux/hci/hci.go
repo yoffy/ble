@@ -3,6 +3,7 @@ package hci
 import (
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"strings"
 	"sync"
@@ -109,6 +110,9 @@ type HCI struct {
 	conns        map[uint16]*Conn
 	chMasterConn chan *Conn // Dial returns master connections.
 	chSlaveConn  chan *Conn // Peripheral accept slave connections.
+
+	connectedHandler    func(evt.LEConnectionComplete)
+	disconnectedHandler func(evt.DisconnectionComplete)
 
 	dialerTmo   time.Duration
 	listenerTmo time.Duration
@@ -505,6 +509,10 @@ func (h *HCI) handleLEConnectionComplete(b []byte) error {
 		}
 		h.params.RUnlock()
 	}
+	log.Println("incoming:", c.RemoteAddr())
+	if h.connectedHandler != nil {
+		h.connectedHandler(e)
+	}
 	return nil
 }
 
@@ -546,6 +554,9 @@ func (h *HCI) handleDisconnectionComplete(b []byte) error {
 	c.txBuffer.LockPool()
 	c.txBuffer.PutAll()
 	c.txBuffer.UnlockPool()
+	if h.disconnectedHandler != nil {
+		h.disconnectedHandler(e)
+	}
 	return nil
 }
 

@@ -2,6 +2,7 @@ package hci
 
 import (
 	"errors"
+	"github.com/go-ble/ble/linux/hci/evt"
 	"time"
 
 	"github.com/go-ble/ble/linux/hci/cmd"
@@ -34,6 +35,18 @@ func (h *HCI) SetConnParams(param cmd.LECreateConnection) error {
 // SetScanParams overrides default scanning parameters.
 func (h *HCI) SetScanParams(param cmd.LESetScanParameters) error {
 	h.params.scanParams = param
+	return nil
+}
+
+// SetConnectedHandler sets handler to be called when new connection is established.
+func (h *HCI) SetConnectedHandler(f func(complete evt.LEConnectionComplete)) error {
+	h.connectedHandler = f
+	return nil
+}
+
+// SetDisconnectedHandler sets handler to be called on disconnect.
+func (h *HCI) SetDisconnectedHandler(f func(evt.DisconnectionComplete)) error {
+	h.disconnectedHandler = f
 	return nil
 }
 
