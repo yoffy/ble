@@ -1,6 +1,7 @@
 package ble
 
 import (
+	"github.com/go-ble/ble/linux/hci/evt"
 	"time"
 
 	"github.com/go-ble/ble/linux/hci/cmd"
@@ -14,6 +15,8 @@ type DeviceOption interface {
 	SetConnParams(cmd.LECreateConnection) error
 	SetScanParams(cmd.LESetScanParameters) error
 	SetAdvParams(cmd.LESetAdvertisingParameters) error
+	SetConnectedHandler(f func(evt.LEConnectionComplete)) error
+	SetDisconnectedHandler(f func(evt.DisconnectionComplete)) error
 	SetPeripheralRole() error
 	SetCentralRole() error
 }
@@ -65,6 +68,20 @@ func OptScanParams(param cmd.LESetScanParameters) Option {
 func OptAdvParams(param cmd.LESetAdvertisingParameters) Option {
 	return func(opt DeviceOption) error {
 		opt.SetAdvParams(param)
+		return nil
+	}
+}
+
+func OptConnectHandler(f func(evt.LEConnectionComplete)) Option {
+	return func(opt DeviceOption) error {
+		opt.SetConnectedHandler(f)
+		return nil
+	}
+}
+
+func OptDisconnectHandler(f func(evt.DisconnectionComplete)) Option {
+	return func(opt DeviceOption) error {
+		opt.SetDisconnectedHandler(f)
 		return nil
 	}
 }
