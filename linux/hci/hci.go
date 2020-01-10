@@ -3,7 +3,6 @@ package hci
 import (
 	"fmt"
 	"io"
-	"log"
 	"net"
 	"strings"
 	"sync"
@@ -509,7 +508,6 @@ func (h *HCI) handleLEConnectionComplete(b []byte) error {
 		}
 		h.params.RUnlock()
 	}
-	log.Println("incoming:", c.RemoteAddr())
 	if h.connectedHandler != nil {
 		h.connectedHandler(e)
 	}
