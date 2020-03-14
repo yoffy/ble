@@ -505,7 +505,7 @@ func (h *HCI) handleLEConnectionComplete(b []byte) error {
 		// So we also re-enable the advertising when a connection disconnected
 		h.params.RLock()
 		if h.params.advEnable.AdvertisingEnable == 1 {
-			go h.Send(&cmd.LESetAdvertiseEnable{0}, nil)
+			go h.Send(&cmd.LESetAdvertiseEnable{AdvertisingEnable: 0}, nil)
 		}
 		h.params.RUnlock()
 	}
