@@ -227,7 +227,10 @@ func (h *HCI) init() error {
 
 // Send ...
 func (h *HCI) Send(c Command, r CommandRP) error {
+	// Only allow one send after another to prevent race condition
+	h.Mutex.Lock()
 	b, err := h.send(c)
+	h.Mutex.Unlock()
 	if err != nil {
 		return err
 	}
